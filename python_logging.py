@@ -212,4 +212,16 @@ logger_custom_string.addHandler(handler)
 #logger_custom_string.debug(pp_odir(obj,traceback.format_stack(limit=5)))  # This will pretty print all the properties from dir(obj)
 
 
+#EXAMPLES
+cars = ["Ford", "Volvo", "BMW"]
+
+# THIS WILL LOG ANYTHING AS STRING
+logger_custom_string.debug(anything(cars,traceback.format_stack(limit=5)))
+
+# THIS WILL LOG ANY OBJECT
+logger_custom_string.debug(pp_odir(cars,traceback.format_stack(limit=5)))
+
+# THIS WILL LOG ALL LOCALS
 logger_custom_string.debug(pp_odir(locals(),traceback.format_stack(limit=5)))
+
+
