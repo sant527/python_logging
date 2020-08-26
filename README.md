@@ -1,6 +1,8 @@
  # HOW TO HAVE CUSTOM LOGGING
 
- Just Copy paste this code into the beginning of a python file (eg:test.py)
+
+
+Just Copy paste this code into the beginning of a python file (eg:test.py)
 
 After the code try (this example is also added in the code)
 
@@ -18,7 +20,7 @@ logger_custom_string.debug(pp_odir(cars,traceback.format_stack(limit=5)))
 logger_custom_string.debug(pp_odir(locals(),traceback.format_stack(limit=5)))
 ```
 
-This will print
+This will print (for streamhandler and for filehandler its put into log file without colors)
 
 ```bash
 --------------------------------------------------------------------------------------------------------------
