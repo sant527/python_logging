@@ -170,3 +170,79 @@ NONE_NO_REQUEST_METHOD
 Here we can see the locals() and also the line where the logging is called and also stacktrace. This will help
 in debugging the values
 
+
+
+## nginx and jupyter with websockets
+
+```
+upstream webapp {
+    server webapp:8000;
+}
+
+
+upstream jupyter {
+    server jupyter:8888;
+}
+
+
+upstream db {
+    server phpmyadmin:80;
+}
+server {
+    listen 80;
+
+    location / {
+        proxy_pass http://webapp;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header Host $http_host;
+        proxy_redirect off;
+    }
+
+}
+
+server {
+    listen 80;
+
+    server_name jyp.*;
+
+    location / {
+        proxy_pass http://jupyter;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header Host $http_host;
+        proxy_redirect off;
+    }
+
+    location ~ /api/kernels/ {
+            proxy_pass            http://jupyter;
+            proxy_set_header      Host $host;
+            # websocket support
+            proxy_http_version    1.1;
+            proxy_set_header      Upgrade "websocket";
+            proxy_set_header      Connection "Upgrade";
+            proxy_read_timeout    86400;
+        }
+    location ~ /terminals/ {
+            proxy_pass            http://jupyter;
+            proxy_set_header      Host $host;
+            # websocket support
+            proxy_http_version    1.1;
+            proxy_set_header      Upgrade "websocket";
+            proxy_set_header      Connection "Upgrade";
+            proxy_read_timeout    86400;
+    }
+
+}
+
+server {
+    listen 80;
+
+    server_name db.*;
+
+    location / {
+        proxy_pass http://db;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header Host $http_host;
+        proxy_redirect off;
+    }
+}
+```
