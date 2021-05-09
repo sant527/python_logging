@@ -246,3 +246,21 @@ server {
     }
 }
 ```
+The WebSocket protocol is different from the HTTP protocol, but the WebSocket handshake is compatible with HTTP, using the HTTP Upgrade facility to upgrade the connection from HTTP to WebSocket. This allows WebSocket applications to more easily fit into existing infrastructures. For example, WebSocket applications can use the standard HTTP ports 80 and 443, thus allowing the use of existing firewall rules.
+
+
+A WebSocket application keeps a long‑running connection open between the client and the server, facilitating the development of real‑time applications. The HTTP Upgrade mechanism used to upgrade the connection from HTTP to WebSocket uses the Upgrade and Connection headers. There are some challenges that a reverse proxy server faces in supporting WebSocket. One is that WebSocket is a hop‑by‑hop protocol, so when a proxy server intercepts an Upgrade request from a client it needs to send its own Upgrade request to the backend server, including the appropriate headers. Also, since WebSocket connections are long lived, as opposed to the typical short‑lived connections used by HTTP, the reverse proxy needs to allow these connections to remain open, rather than closing them because they seem to be idle.
+
+
+NGINX supports WebSocket by allowing a tunnel to be set up between a client and a backend server. For NGINX to send the Upgrade request from the client to the backend server, the Upgrade and Connection headers must be set explicitly, as in this example:
+
+```
+location /wsapp/ {
+    proxy_pass http://wsbackend;
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection "Upgrade";
+    proxy_set_header Host $host;
+}
+```
+Once this is done, NGINX deals with this as a WebSocket connection.
